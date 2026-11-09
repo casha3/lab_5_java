@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Схема входящего платёжного запроса.
+     Namespace: urn:payment:request:v1. Ограничения (BIC, диапазон/точность денег)
+     выражены в самой XSD. -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:pr="urn:payment:request:v1"
+           targetNamespace="urn:payment:request:v1"
+           elementFormDefault="qualified">
+
+  <!-- Максимальный диапазон денег M = 9999999999999999.99 -->
+  <xs:simpleType name="Money">
+    <xs:restriction base="xs:decimal">
+      <xs:minInclusive value="0"/>
+      <xs:maxInclusive value="9999999999999999.99"/>
+      <xs:fractionDigits value="2"/>
+      <xs:totalDigits value="18"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="PositiveMoney">
+    <xs:restriction base="xs:decimal">
+      <xs:minExclusive value="0"/>
+      <xs:maxInclusive value="9999999999999999.99"/>
+      <xs:fractionDigits value="2"/>
+      <xs:totalDigits value="18"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- BIC: ровно 8 или 11 символов A-Z0-9 (без пробелов/смены регистра). -->
+  <xs:simpleType name="Bic">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[A-Z0-9]{8}([A-Z0-9]{3})?"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:element name="PaymentRequest">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="clientReference">
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:minLength value="1"/>
+              <xs:maxLength value="64"/>
+              <xs:pattern value=".*\S.*"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:element>
+        <xs:element name="issuerBic"   type="pr:Bic"/>
+        <xs:element name="receiverBic" type="pr:Bic"/>
+        <xs:element name="acquirerBic" type="pr:Bic"/>
+        <xs:element name="amount"      type="pr:PositiveMoney"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

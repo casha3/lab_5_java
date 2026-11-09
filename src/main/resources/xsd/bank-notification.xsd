@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Схема уведомления банку (генерируется JAXB-marshal-ом).
+     Namespace: urn:payment:notification:v1. -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:bn="urn:payment:notification:v1"
+           targetNamespace="urn:payment:notification:v1"
+           elementFormDefault="qualified">
+
+  <xs:simpleType name="Money">
+    <xs:restriction base="xs:decimal">
+      <xs:minExclusive value="0"/>
+      <xs:maxInclusive value="9999999999999999.99"/>
+      <xs:fractionDigits value="2"/>
+      <xs:totalDigits value="18"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="Uuid">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="NotificationType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="DEBIT_REQUEST"/>
+      <xs:enumeration value="CREDIT_ADVICE"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:element name="BankNotification">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="notificationId" type="bn:Uuid"/>
+        <xs:element name="transactionId"  type="bn:Uuid"/>
+        <xs:element name="type"           type="bn:NotificationType"/>
+        <xs:element name="bankBic"        type="xs:string"/>
+        <xs:element name="amount"         type="bn:Money"/>
+        <xs:element name="createdAt"      type="xs:dateTime"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>
